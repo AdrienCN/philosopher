@@ -6,7 +6,7 @@
 /*   By: calao <adconsta@student.42.fr>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/24 15:29:50 by calao             #+#    #+#             */
-/*   Updated: 2021/06/24 15:45:45 by calao            ###   ########.fr       */
+/*   Updated: 2021/06/24 16:30:34 by calao            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,15 @@
 # include <pthread.h>
 # include <sys/time.h>
 
-# define LIFE 42
-	
+typdef	struct s_philo
+{
+	int			fork_philo_nb;
+	int			meal_nb;
+	int			death;
+	int			eat;
+	int			sleep;
+	pthread_t	*philo;
+}				t_philo;
+
+
 #endif
