@@ -6,7 +6,7 @@
 /*   By: calao <adconsta@student.42.fr>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/24 15:29:50 by calao             #+#    #+#             */
-/*   Updated: 2021/06/24 16:30:34 by calao            ###   ########.fr       */
+/*   Updated: 2021/06/24 19:21:21 by calao            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,7 @@
 # include <pthread.h>
 # include <sys/time.h>
 
-typdef	struct s_philo
+typedef	struct s_philo
 {
 	int			fork_philo_nb;
 	int			meal_nb;

@@ -2,6 +2,34 @@
 
 int		parsing_error(char **argv);
 int		ft_philo_atoi(char *str);
+void	ft_set_data(t_philo *data, char **argv, int argc);
+
+void	print_philo(t_philo *data)
+{
+	printf("Number of philosophers: %d \n", data->fork_philo_nb);
+	printf("Lifetime : %d ms\n", data->death);
+	printf("Time to eat : %d ms\n", data->eat);
+	printf("Time to sleep : %d ms\n", data->sleep);
+	if (data->meal_nb != -1)
+		printf("Number of meals : %d| miam miam|\n", data->meal_nb);
+}
+
+int		ft_atoi(char *str)
+{
+	int i;
+	int	res;
+	
+	i = 0;
+	res = 0;
+	if (str[i] == '+')
+		i++;
+	while (str[i])
+	{
+		res = res * 10 + str[i] - 48;
+		i++;
+	}
+	return (res);
+}
 
 int		main(int argc, char **argv)
 {
@@ -17,18 +45,19 @@ int		main(int argc, char **argv)
 		printf("Error: parsing: wrong args\n");
 		return (1);
 	}
-	ft_set_data(&data, argv);
+	ft_set_data(&data, argv, argc);
+	print_philo(&data);
 	return (42);
 }
 
-void	ft_set_data(t_philo *data, char **argv)
+void	ft_set_data(t_philo *data, char **argv, int argc)
 {
 	data->fork_philo_nb = ft_atoi(argv[1]);
 	data->death = ft_atoi(argv[2]);
 	data->eat = ft_atoi(argv[3]);
 	data->sleep = ft_atoi(argv[4]);
-	if (argv[5] != '\0')
-		data->meal_nb = ft_atoi[5];
+	if (argc ==  6)
+		data->meal_nb = ft_atoi(argv[5]);
 	else
 		data->meal_nb = -1;
 }
