@@ -6,7 +6,7 @@
 /*   By: calao <adconsta@student.42.fr>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/24 15:29:50 by calao             #+#    #+#             */
-/*   Updated: 2021/06/30 15:12:15 by calao            ###   ########.fr       */
+/*   Updated: 2021/06/30 15:35:29 by calao            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,8 +50,16 @@ typedef	struct s_data
 	int				eat;
 	int				sleep;
 	struct	timeval	start;
-	struct	timeval	now;
+	struct	timeval	end;
+	long			now;
 	t_philo			*philo_tab;
 }				t_data;
 
+int		parsing_error(char **argv);
+int		ft_data_atoi(char *str);
+int		ft_set_data(t_data *data, char **argv, int argc);
+void	ft_free_philo(t_data *data);
+void	get_time(t_data *data);
+void	print_time(t_data *data);
+void	print_data(t_data *data);
 #endif

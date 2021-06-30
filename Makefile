@@ -1,5 +1,7 @@
-SRCS = srcs/main.c
-
+SRCS = 	srcs/main.c	\
+		srcs/utils_parse_time.c \
+		srcs/utils_print.c
+		
 OBJ = $(SRCS:.c=.o)
 
 NAME = philo
