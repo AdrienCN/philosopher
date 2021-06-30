@@ -32,10 +32,18 @@ int		ft_atoi(char *str)
 	return (res);
 }
 
+void	print_time(struct timeval *now, struct timeval *start)
+{
+	long long timestamp;
+
+	gettimeofday(now, NULL);
+	timestamp = ((now->tv_sec * 1000 + now->tv_usec) - (start->tv_sec * 1000 + start->tv_usec));	
+	printf(""GRN"%lld miliseconds elapsed \n"WHT"", timestamp);
+}
 int		main(int argc, char **argv)
 {
-	t_data	data;
-
+	t_data			data;
+	
 	if (argc < 5 || argc > 6)
 	{
 		printf("Error: arg count = %d: Philo needs 4 or 5 arguments\n", argc);
@@ -48,8 +56,10 @@ int		main(int argc, char **argv)
 	}
 	if (ft_set_data(&data, argv, argc) != 0)
 		return (-1);
+	print_time(&data.now, &data.start);
 	print_data(&data);
 	ft_free_philo(&data);
+	print_time(&data.now, &data.start);
 	return (42);
 }
 
@@ -65,6 +75,8 @@ int		ft_set_data(t_data *data, char **argv, int argc)
 {
 	int i;
 	
+	gettimeofday(&data->start, NULL);	
+	print_time(&data->now, &data->start);
 	data->philo_nb = ft_atoi(argv[1]);
 	data->death = ft_atoi(argv[2]);
 	data->eat = ft_atoi(argv[3]);
