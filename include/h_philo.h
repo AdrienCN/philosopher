@@ -6,7 +6,7 @@
 /*   By: calao <adconsta@student.42.fr>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/24 15:29:50 by calao             #+#    #+#             */
-/*   Updated: 2021/07/01 19:27:10 by calao            ###   ########.fr       */
+/*   Updated: 2021/07/01 20:06:43 by calao            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,7 @@
 # define BLK "\e[0;30m"
 # define RED "\e[0;31m"
 # define GRN "\e[0;32m"
-# define YEL "\e[0;33m"
+# define YLW "\e[0;33m"
 # define BLE "\e[0;34m"
 # define MAG "\e[0;35m"
 # define CYN "\e[0;36m"
@@ -46,16 +46,17 @@ typedef	struct	s_philo
 	int					r_fork_id;
 	int					p_sleep;
 	int					p_eat;
-	int					p_death;
-	int					p_meal;
 	int					p_id;
+	int					p_meal_count;
 	int					p_is_alive;
+	long				p_last_meal_diff;
 	
 	pthread_t			philo;
 	pthread_mutex_t		l_fork;
 	pthread_mutex_t		r_fork;
 
 	long				p_now;
+	struct	timeval		p_last_meal;
 	struct	timeval		p_end;
 	t_data				*data;
 
@@ -66,7 +67,7 @@ int		ft_data_atoi(char *str);
 int		ft_atoi(char *str);
 int		ft_set_data(t_philo *philo, char **argv, int argc);
 void	ft_free_philo(t_philo *data);
-void	get_time(t_philo *data);
+long	get_time_diff(struct timeval start);
 void	print_time(t_philo *data);
 void	print_data(t_data *data);
 #endif

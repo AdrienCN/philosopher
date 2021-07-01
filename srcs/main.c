@@ -5,8 +5,24 @@ void	*routine(void *arg)
 	t_philo *philo;
 		
 	philo = (t_philo *)arg;
-	while (philo->p_is_alive != 0 && philo->p_meal < philo->data->meal_nb)
+	philo->p_meal_count = 0;
+	gettimeofday(&philo->p_last_meal, NULL);
+	philo->p_last_meal_diff = get_time_diff(philo->p_last_meal);
+	if (philo->p_last_meal_diff >= philo->data->death)
 	{
+		print_time(philo);
+		printf(""YLW"Oh no philo -%d- DIED. Anyways... \n"WHT"", philo->p_id);
+		return (NULL);
+	}
+	while (philo->p_is_alive != 0 && philo->p_meal_count < philo->data->meal_nb)
+	{
+		philo->p_last_meal_diff = get_time_diff(philo->p_last_meal);
+		if (philo->p_last_meal_diff >= philo->data->death)
+		{
+			print_time(philo);
+			printf(""YLW"Oh no philo -%d- DIED. Anyways... \n"WHT"", philo->p_id);
+			return (NULL);
+		}
 		pthread_mutex_lock(philo->data->fork_tab + philo->l_fork_id);
 	//	printf("entering routine:"WHT"\n");
 		print_time(philo);
@@ -16,8 +32,9 @@ void	*routine(void *arg)
 		printf("philo_id - %d takes r_fork (%d)\n", philo->p_id, philo->r_fork_id); 
 //		philo->p_death = 1;
 		print_time(philo);
+		gettimeofday(&philo->p_last_meal, NULL);
 		printf("philo_id - %d eats ... \n"WHT"", philo->p_id);
-		philo->p_meal++;
+		philo->p_meal_count++;
 		usleep(philo->data->eat * 1000);
 
 		pthread_mutex_unlock(philo->data->fork_tab + philo->l_fork_id);
