@@ -6,6 +6,8 @@ void	print_data(t_data *data)
 	printf("Lifetime : %d ms\n", data->death);
 	printf("Time to eat : %d ms\n", data->eat);
 	printf("Time to sleep : %d ms\n", data->sleep);
-	if (data->meal_nb != -1)
-		printf("Number of meals : %d| miam miam|\n", data->meal_nb);
+	if (data->meal_goal != -1)
+		printf("Number of meals : %d| miam miam|\n", data->meal_goal);
+	else
+		printf("No Meals limits\n");
 }

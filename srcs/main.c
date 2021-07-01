@@ -6,31 +6,24 @@ void	*routine(void *arg)
 		
 	philo = (t_philo *)arg;
 	philo->p_meal_count = 0;
-	gettimeofday(&philo->p_last_meal, NULL);
-	philo->p_last_meal_diff = get_time_diff(philo->p_last_meal);
-	if (philo->p_last_meal_diff >= philo->data->death)
+	while (philo->p_is_alive != 0 && philo->p_meal_count < philo->data->meal_goal)
 	{
-		print_time(philo);
-		printf(""YLW"Oh no philo -%d- DIED. Anyways... \n"WHT"", philo->p_id);
-		return (NULL);
-	}
-	while (philo->p_is_alive != 0 && philo->p_meal_count < philo->data->meal_nb)
-	{
-		philo->p_last_meal_diff = get_time_diff(philo->p_last_meal);
-		if (philo->p_last_meal_diff >= philo->data->death)
-		{
-			print_time(philo);
-			printf(""YLW"Oh no philo -%d- DIED. Anyways... \n"WHT"", philo->p_id);
-			return (NULL);
-		}
 		pthread_mutex_lock(philo->data->fork_tab + philo->l_fork_id);
 	//	printf("entering routine:"WHT"\n");
+		if (!philo->p_is_alive)
+			return (NULL);
 		print_time(philo);
 		printf("philo_id - %d takes l_fork (%d)\n", philo->p_id, philo->l_fork_id); 
 		pthread_mutex_lock(philo->data->fork_tab + philo->r_fork_id);
+		
+		if (!philo->p_is_alive)
+			return (NULL);
 		print_time(philo);
 		printf("philo_id - %d takes r_fork (%d)\n", philo->p_id, philo->r_fork_id); 
 //		philo->p_death = 1;
+	
+		if (!philo->p_is_alive)
+			return (NULL);
 		print_time(philo);
 		gettimeofday(&philo->p_last_meal, NULL);
 		printf("philo_id - %d eats ... \n"WHT"", philo->p_id);
@@ -39,17 +32,60 @@ void	*routine(void *arg)
 
 		pthread_mutex_unlock(philo->data->fork_tab + philo->l_fork_id);
 		pthread_mutex_unlock(philo->data->fork_tab + philo->r_fork_id);
-		
+	
+		if (!philo->p_is_alive)
+			return (NULL);
 		print_time(philo);
 		printf("philo_id - %d drops the forks ... & sleeps \n"WHT"", philo->p_id);
 		usleep(philo->data->sleep * 1000);
-		
+	
+		if (!philo->p_is_alive)
+			return (NULL);	
 		print_time(philo);
 		printf(""RED"philo_id = %d wake up & thinks...\n"WHT"", philo->p_id);
 	}
-	printf(""BLE"philo -%d- has a full belly \n"WHT"", philo->p_id);
-		return (NULL);
+	return (NULL);
 }
+
+int		everyone_needs_to_eat(t_philo *philo)
+{
+	int i;
+
+	i = 0;
+	if (philo->data->meal_goal == -1)
+		return (1);
+	while (i < philo->data->philo_nb)
+	{
+		if (philo[i].p_meal_count< philo->data->meal_goal)
+			return (1);
+		i++;
+	}
+	printf(""BLE"Everyone ate well.\n");
+	return (0);
+}
+
+int		everyone_is_alive(t_philo *philo)
+{
+	int i;
+	int ret;
+	long time_since_last_meal;
+
+	i = 0;
+	ret = 1;
+	while (i < philo->data->philo_nb)
+	{
+		time_since_last_meal = get_time_diff(philo[i].p_last_meal);
+		if (time_since_last_meal >= philo->data->death)
+		{
+			printf(""MAG"Oh no philo -%d- DIED. Anyways... \n"WHT"", philo[i].p_id);
+			philo[i].p_is_alive = 0;
+			ret = 0;
+		}
+		i++;
+	}
+	return (ret);
+}
+
 
 int		main(int argc, char **argv)
 {
@@ -83,7 +119,12 @@ int		main(int argc, char **argv)
 	//	pthread_create(&(data.philo_tab + i)->philo, NULL, &routine_2, &test);
 		i++;
 	}
-	
+
+	while (everyone_is_alive(philo) && everyone_needs_to_eat(philo))
+	{
+		printf(""CYN"tout va bien\n");
+		sleep(1);
+	}
 	i = 0;
 	while (i < philo->data->philo_nb)
 	{
@@ -96,44 +137,6 @@ int		main(int argc, char **argv)
 	ft_free_philo(philo);
 	return (42);
 }
-/*
-void	tmp(void)
-{
-	data->fork_tab = malloc(sizeof(pthread_mutex_t) * (data->philo_nb));
-	data->philo_tab = malloc(sizeof(t_data) * (data->philo_nb));
-	if (data->fork_tab == NULL || data->philo_tab == NULL)
-		return (1);
-	i = 0;
-	while (i < data->philo_nb)
-	{
-		pthread_mutex_init(data->fork_tab + i, NULL);
-		data->philo_tab[i].p_death = 0;
-		data->philo_tab[i].p_id = i;
-		//data->philo_tab[i].r_fork = data->fork_tab[i];
-		data->philo_tab[i].r_fork_id = i;
-		if (i == 0)
-		{
-		//	data->philo_tab[i].l_fork = data->fork_tab[data->philo_nb - 1];
-			data->philo_tab[i].l_fork_id = data->philo_nb - 1;
-		}
-		else
-		{
-		//	data->philo_tab[i].l_fork = data->fork_tab[i - 1];
-			data->philo_tab[i].l_fork_id = i - 1;
-		}
-		printf("set data i = %d | p_id = %d\n", i, data->philo_tab[i].p_id);
-		i++;
-	}
-	//printf("\n");
-	i = 0;
-	while (i < data->philo_nb)
-	{
-		printf("LEFT_fork = %d <-- philo[ %d ] --> RIGHT_f = %d\n", data->philo_tab[i].l_fork, i, data->philo_tab[i].r_fork);
-		i++;
-	}
-	printf("\n");
-}
-*/
 
 void	ft_free_philo(t_philo *philo)
 {

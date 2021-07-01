@@ -6,7 +6,7 @@
 /*   By: calao <adconsta@student.42.fr>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/24 15:29:50 by calao             #+#    #+#             */
-/*   Updated: 2021/07/01 20:06:43 by calao            ###   ########.fr       */
+/*   Updated: 2021/07/01 21:20:43 by calao            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,7 +32,7 @@
 typedef	struct s_data
 {
 	int				philo_nb;
-	int				meal_nb;
+	int				meal_goal;
 	int				death;
 	int				eat;
 	int				sleep;
@@ -57,7 +57,6 @@ typedef	struct	s_philo
 
 	long				p_now;
 	struct	timeval		p_last_meal;
-	struct	timeval		p_end;
 	t_data				*data;
 
 }				t_philo;

@@ -30,9 +30,9 @@ int		ft_set_data(t_philo *philo, char **argv, int argc)
 	data->eat = ft_atoi(argv[3]);
 	data->sleep = ft_atoi(argv[4]);
 	if (argc ==  6)
-		data->meal_nb = ft_atoi(argv[5]);
+		data->meal_goal = ft_atoi(argv[5]);
 	else
-		data->meal_nb = -1;
+		data->meal_goal = -1;
 	data->fork_tab = malloc(sizeof(pthread_mutex_t) * (data->philo_nb));
 	if (data->fork_tab == NULL)
 		return (1);
@@ -48,6 +48,7 @@ int		ft_set_data(t_philo *philo, char **argv, int argc)
 		philo[i].p_id = i;
 		philo[i].r_fork = data->fork_tab[i];
 		philo[i].r_fork_id = i;
+		gettimeofday(&philo[i].p_last_meal, NULL);
 		if (i == 0)
 		{
 			philo[i].l_fork = data->fork_tab[data->philo_nb - 1];
