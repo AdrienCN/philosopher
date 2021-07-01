@@ -26,7 +26,7 @@ void	get_time(t_data *data)
 int		ft_set_data(t_data *data, char **argv, int argc)
 {
 	int i;
-	
+
 	gettimeofday(&data->start, NULL);	
 	print_time(data);
 	data->philo_nb = ft_atoi(argv[1]);
@@ -38,13 +38,16 @@ int		ft_set_data(t_data *data, char **argv, int argc)
 	else
 		data->meal_nb = -1;
 	data->fork_tab = malloc(sizeof(pthread_mutex_t) * (data->philo_nb));
-	data->philo_tab = malloc(sizeof(t_data) * (data->philo_nb));
+	data->philo_tab = malloc(sizeof(t_philo) * (data->philo_nb));
 	if (data->fork_tab == NULL || data->philo_tab == NULL)
 		return (1);
+	i = -1;
+	while (++i < data->philo_nb)
+		pthread_mutex_init(data->fork_tab + i, NULL);
 	i = 0;
 	while (i < data->philo_nb)
 	{
-		pthread_mutex_init(data->fork_tab + i, NULL);
+		data->philo_tab[i].p_death = 0;
 		data->philo_tab[i].p_id = i;
 		data->philo_tab[i].r_fork = data->fork_tab[i];
 		data->philo_tab[i].r_fork_id = i;
@@ -58,19 +61,17 @@ int		ft_set_data(t_data *data, char **argv, int argc)
 			data->philo_tab[i].l_fork = data->fork_tab[i - 1];
 			data->philo_tab[i].l_fork_id = i - 1;
 		}
-		printf("i = %d | p_id = %d\n", i, data->philo_tab[i].p_id);
+		printf("set data i = %d | p_id = %d\n", i, data->philo_tab[i].p_id);
 		i++;
 	}
-	//printf("\n");
-	/*
-	i = 0;
+	/*i = 0;
 	while (i < data->philo_nb)
 	{
 		printf("LEFT_fork = %d <-- philo[ %d ] --> RIGHT_f = %d\n", data->philo_tab[i].l_fork, i, data->philo_tab[i].r_fork);
 		i++;
 	}
 	printf("\n");
-	*/
+*/
 	return (0);
 }
 
