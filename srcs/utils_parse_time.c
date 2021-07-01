@@ -17,18 +17,20 @@ int		ft_atoi(char *str)
 	return (res);
 }
 
-void	get_time(t_data *data)
+void	get_time(t_philo *philo)
 {
-	gettimeofday(&data->end, NULL);
-	data->now = ((data->end.tv_sec * 1000 + data->end.tv_usec) - (data->start.tv_sec * 1000 + data->start.tv_usec));	
+	gettimeofday(&philo->p_end, NULL);
+	philo->p_now = ((philo->p_end.tv_sec * 1000 + philo->p_end.tv_usec) - (philo->data->start.tv_sec * 1000 + philo->data->start.tv_usec));	
 }
 
-int		ft_set_data(t_data *data, char **argv, int argc)
+int		ft_set_data(t_philo *philo, char **argv, int argc)
 {
 	int i;
+	t_data *data;
 
-	gettimeofday(&data->start, NULL);	
-	print_time(data);
+	data = malloc(sizeof(t_data));
+	if (data == NULL)
+		return (1);
 	data->philo_nb = ft_atoi(argv[1]);
 	data->death = ft_atoi(argv[2]);
 	data->eat = ft_atoi(argv[3]);
@@ -38,30 +40,32 @@ int		ft_set_data(t_data *data, char **argv, int argc)
 	else
 		data->meal_nb = -1;
 	data->fork_tab = malloc(sizeof(pthread_mutex_t) * (data->philo_nb));
-	data->philo_tab = malloc(sizeof(t_philo) * (data->philo_nb));
-	if (data->fork_tab == NULL || data->philo_tab == NULL)
+	if (data->fork_tab == NULL)
 		return (1);
 	i = -1;
 	while (++i < data->philo_nb)
 		pthread_mutex_init(data->fork_tab + i, NULL);
+
 	i = 0;
 	while (i < data->philo_nb)
 	{
-		data->philo_tab[i].p_death = 0;
-		data->philo_tab[i].p_id = i;
-		data->philo_tab[i].r_fork = data->fork_tab[i];
-		data->philo_tab[i].r_fork_id = i;
+		philo[i].data = data;
+		philo[i].p_death = 0;
+		philo[i].p_is_alive = 1;
+		philo[i].p_id = i;
+		philo[i].r_fork = data->fork_tab[i];
+		philo[i].r_fork_id = i;
 		if (i == 0)
 		{
-			data->philo_tab[i].l_fork = data->fork_tab[data->philo_nb - 1];
-			data->philo_tab[i].l_fork_id = data->philo_nb - 1;
+			philo[i].l_fork = data->fork_tab[data->philo_nb - 1];
+			philo[i].l_fork_id = data->philo_nb - 1;
 		}
 		else
 		{
-			data->philo_tab[i].l_fork = data->fork_tab[i - 1];
-			data->philo_tab[i].l_fork_id = i - 1;
+			philo[i].l_fork = data->fork_tab[i - 1];
+			philo[i].l_fork_id = i - 1;
 		}
-		printf("set data i = %d | p_id = %d\n", i, data->philo_tab[i].p_id);
+		printf("set data i = %d | p_id = %d\n", i, philo[i].p_id);
 		i++;
 	}
 	/*i = 0;

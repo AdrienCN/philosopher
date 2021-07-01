@@ -5,23 +5,30 @@ void	*routine(void *arg)
 	t_philo *philo;
 		
 	philo = (t_philo *)arg;
-	printf(""RED"philo_id = %d waits...\n"WHT"", philo->p_id);
-	pthread_mutex_lock(&philo->l_fork);
-	pthread_mutex_lock(&philo->r_fork);
-//	philo->p_death = 1;
-	printf(""GRN"entering routine:"WHT"\n");
-	printf("\tphilo_id = %d \n"WHT"", philo->p_id);
-	printf("\tl_fork = %d | r_fork = %d\n", philo->l_fork_id, philo->r_fork_id);
-	printf("\tphilo_id = %d is leaving \n"WHT"", philo->p_id);
-	pthread_mutex_unlock(&philo->l_fork);
-	pthread_mutex_unlock(&philo->r_fork);
-	return (NULL);
+	while (philo->p_is_alive != 0)
+	{
+		printf(""RED"philo_id = %d waits...\n"WHT"", philo->p_id);
+		pthread_mutex_lock(&philo->l_fork);
+		printf("entering routine:"WHT"\n");
+		printf("philo_id = %d take l_fork (%d)\n", philo->p_id, philo->l_fork_id); 
+		pthread_mutex_lock(&philo->r_fork);
+		printf("philo_id = %d take r_fork (%d)\n", philo->p_id, philo->r_fork_id); 
+//		philo->p_death = 1;
+		printf("\tphilo_id = %d eats ... \n"WHT"", philo->p_id);
+		usleep(100);
+		printf("\tphilo_id = %d is leaving \n"WHT"", philo->p_id);
+		pthread_mutex_unlock(&philo->l_fork);
+		pthread_mutex_unlock(&philo->r_fork);
+		philo->p_is_alive = 0;
+	}
+		return (NULL);
 }
 
 int		main(int argc, char **argv)
 {
-	t_data			data;
+	t_philo			*philo;
 	int				i;
+	
 	if (argc < 5 || argc > 6)
 	{
 		printf("Error: arg count = %d: Philo needs 4 or 5 arguments\n", argc);
@@ -32,27 +39,32 @@ int		main(int argc, char **argv)
 		printf("Error: parsing: wrong args\n");
 		return (1);
 	}
-	if (ft_set_data(&data, argv, argc) != 0)
+	philo = malloc(sizeof(t_philo) * (ft_atoi(argv[1])));
+	if (philo == NULL)
+		return (1);
+	if (ft_set_data(philo, argv, argc) != 0)
 		return (-1);
-	print_data(&data);
+	print_data(philo->data);
+	gettimeofday(&(philo->data->start), NULL);
+	print_time(philo);
 	i = 0;
-	while (i < data.philo_nb)
+	while (i < philo->data->philo_nb)
 	{
-		pthread_create(&(data.philo_tab + i)->philo, NULL, &routine, data.philo_tab	+ i);
+		pthread_create(&(philo[i].philo), NULL, &routine, philo + i);
 		//pthread_create(&(data.philo_tab + i)->philo, NULL, &routine, &i);
 	//	pthread_create(&(data.philo_tab + i)->philo, NULL, &routine_2, &test);
 		i++;
 	}
 	
 	i = 0;
-	while (i < data.philo_nb)
+	while (i < philo->data->philo_nb)
 	{
-		pthread_join((data.philo_tab + i)->philo, NULL);
+		pthread_join(philo[i].philo, NULL);
 		i++;
 	}
 	
-	ft_free_philo(&data);
-	print_time(&data);
+	print_time(philo);
+	ft_free_philo(philo);
 	return (42);
 }
 /*
@@ -94,10 +106,12 @@ void	tmp(void)
 }
 */
 
-void	ft_free_philo(t_data *data)
+void	ft_free_philo(t_philo *philo)
 {
-	if (data->fork_tab != NULL)
-		free(data->fork_tab);
-	if (data->philo_tab != NULL)
-		free(data->philo_tab);
+	if (philo->data->fork_tab)
+		free(philo->data->fork_tab);
+	if (philo->data)
+		free(philo->data);
+	//free(philo) ou  for (i < philo_nb) free(philo[i]) ? 
+
 }

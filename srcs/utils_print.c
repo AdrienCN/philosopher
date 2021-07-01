@@ -10,8 +10,8 @@ void	print_data(t_data *data)
 		printf("Number of meals : %d| miam miam|\n", data->meal_nb);
 }
 
-void	print_time(t_data *data)
+void	print_time(t_philo *philo)
 {
-	get_time(data);
-	printf(""GRN"%ld miliseconds elapsed \n"WHT"", data->now);
+	get_time(philo);
+	printf(""GRN"%ld miliseconds elapsed \n"WHT"", philo->p_now);
 }
