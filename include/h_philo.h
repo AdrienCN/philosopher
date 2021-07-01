@@ -6,7 +6,7 @@
 /*   By: calao <adconsta@student.42.fr>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/24 15:29:50 by calao             #+#    #+#             */
-/*   Updated: 2021/07/01 18:09:12 by calao            ###   ########.fr       */
+/*   Updated: 2021/07/01 19:27:10 by calao            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,7 @@
 # define RED "\e[0;31m"
 # define GRN "\e[0;32m"
 # define YEL "\e[0;33m"
-# define BLU "\e[0;34m"
+# define BLE "\e[0;34m"
 # define MAG "\e[0;35m"
 # define CYN "\e[0;36m"
 # define WHT "\e[0;37m"

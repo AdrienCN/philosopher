@@ -30,6 +30,7 @@ void	*routine(void *arg)
 		print_time(philo);
 		printf(""RED"philo_id = %d wake up & thinks...\n"WHT"", philo->p_id);
 	}
+	printf(""BLE"philo -%d- has a full belly \n"WHT"", philo->p_id);
 		return (NULL);
 }
 
