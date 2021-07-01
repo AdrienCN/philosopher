@@ -37,23 +37,31 @@ int		ft_set_data(t_data *data, char **argv, int argc)
 		data->meal_nb = ft_atoi(argv[5]);
 	else
 		data->meal_nb = -1;
-	data->fork_tab = malloc(sizeof(int) * (data->philo_nb));
+	data->fork_tab = malloc(sizeof(pthread_mutex_t) * (data->philo_nb));
 	data->philo_tab = malloc(sizeof(t_data) * (data->philo_nb));
 	if (data->fork_tab == NULL || data->philo_tab == NULL)
 		return (1);
 	i = 0;
 	while (i < data->philo_nb)
 	{
-		data->fork_tab[i] = i;
-		data->philo_tab[i].r_fork = i;
+		pthread_mutex_init(data->fork_tab + i, NULL);
+		data->philo_tab[i].p_id = i;
+		data->philo_tab[i].r_fork = data->fork_tab[i];
+		data->philo_tab[i].r_fork_id = i;
 		if (i == 0)
-			data->philo_tab[i].l_fork = data->philo_nb - 1;
+		{
+			data->philo_tab[i].l_fork = data->fork_tab[data->philo_nb - 1];
+			data->philo_tab[i].l_fork_id = data->philo_nb - 1;
+		}
 		else
-			data->philo_tab[i].l_fork = i - 1;
-		printf("fork_tab[%d] = %d; ", i, data->fork_tab[i]);
+		{
+			data->philo_tab[i].l_fork = data->fork_tab[i - 1];
+			data->philo_tab[i].l_fork_id = i - 1;
+		}
+		printf("i = %d | p_id = %d\n", i, data->philo_tab[i].p_id);
 		i++;
 	}
-	printf("\n");
+	//printf("\n");
 	/*
 	i = 0;
 	while (i < data->philo_nb)

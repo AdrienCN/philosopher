@@ -8,15 +8,17 @@ NAME = philo
 
 INCLUDE = ./include/
 
+
+
 CC = gcc
 
 CFLAGS = -Wall -Wextra -Werror
 
 %.o: %.c $(INCLUDE)
-	$(CC) $(CFLAGS) -I $(INCLUDE) -c $< -o $@
+	$(CC) $(CFLAGS) -pthread -I $(INCLUDE) -c $< -o $@
 
 $(NAME): $(OBJ)
-	$(CC) $(CFLAGS) -I $(INCLUDE) $(OBJ) -o $@
+	$(CC) $(CFLAGS) -pthread -I $(INCLUDE) $(OBJ) -o $@
 
 all: $(NAME)
 
