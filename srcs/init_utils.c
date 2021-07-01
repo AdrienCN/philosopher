@@ -17,12 +17,6 @@ int		ft_atoi(char *str)
 	return (res);
 }
 
-void	get_time(t_philo *philo)
-{
-	gettimeofday(&philo->p_end, NULL);
-	philo->p_now = ((philo->p_end.tv_sec * 1000 + philo->p_end.tv_usec) - (philo->data->start.tv_sec * 1000 + philo->data->start.tv_usec));	
-}
-
 int		ft_set_data(t_philo *philo, char **argv, int argc)
 {
 	int i;
@@ -51,6 +45,7 @@ int		ft_set_data(t_philo *philo, char **argv, int argc)
 	{
 		philo[i].data = data;
 		philo[i].p_death = 0;
+		philo[i].p_meal = 0;
 		philo[i].p_is_alive = 1;
 		philo[i].p_id = i;
 		philo[i].r_fork = data->fork_tab[i];

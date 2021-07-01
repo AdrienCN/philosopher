@@ -1,6 +1,7 @@
 SRCS = 	srcs/main.c	\
-		srcs/utils_parse_time.c \
-		srcs/utils_print.c
+		srcs/init_utils.c \
+		srcs/print_utils.c \
+		srcs/time_utils.c
 		
 OBJ = $(SRCS:.c=.o)
 

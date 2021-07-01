@@ -5,21 +5,30 @@ void	*routine(void *arg)
 	t_philo *philo;
 		
 	philo = (t_philo *)arg;
-	while (philo->p_is_alive != 0)
+	while (philo->p_is_alive != 0 && philo->p_meal < philo->data->meal_nb)
 	{
-		printf(""RED"philo_id = %d waits...\n"WHT"", philo->p_id);
-		pthread_mutex_lock(&philo->l_fork);
-		printf("entering routine:"WHT"\n");
-		printf("philo_id = %d take l_fork (%d)\n", philo->p_id, philo->l_fork_id); 
-		pthread_mutex_lock(&philo->r_fork);
-		printf("philo_id = %d take r_fork (%d)\n", philo->p_id, philo->r_fork_id); 
+		pthread_mutex_lock(philo->data->fork_tab + philo->l_fork_id);
+	//	printf("entering routine:"WHT"\n");
+		print_time(philo);
+		printf("philo_id - %d takes l_fork (%d)\n", philo->p_id, philo->l_fork_id); 
+		pthread_mutex_lock(philo->data->fork_tab + philo->r_fork_id);
+		print_time(philo);
+		printf("philo_id - %d takes r_fork (%d)\n", philo->p_id, philo->r_fork_id); 
 //		philo->p_death = 1;
-		printf("\tphilo_id = %d eats ... \n"WHT"", philo->p_id);
-		usleep(100);
-		printf("\tphilo_id = %d is leaving \n"WHT"", philo->p_id);
-		pthread_mutex_unlock(&philo->l_fork);
-		pthread_mutex_unlock(&philo->r_fork);
-		philo->p_is_alive = 0;
+		print_time(philo);
+		printf("philo_id - %d eats ... \n"WHT"", philo->p_id);
+		philo->p_meal++;
+		usleep(philo->data->eat * 1000);
+
+		pthread_mutex_unlock(philo->data->fork_tab + philo->l_fork_id);
+		pthread_mutex_unlock(philo->data->fork_tab + philo->r_fork_id);
+		
+		print_time(philo);
+		printf("philo_id - %d drops the forks ... & sleeps \n"WHT"", philo->p_id);
+		usleep(philo->data->sleep * 1000);
+		
+		print_time(philo);
+		printf(""RED"philo_id = %d wake up & thinks...\n"WHT"", philo->p_id);
 	}
 		return (NULL);
 }
@@ -47,6 +56,7 @@ int		main(int argc, char **argv)
 	print_data(philo->data);
 	gettimeofday(&(philo->data->start), NULL);
 	print_time(philo);
+	printf("\n");
 	i = 0;
 	while (i < philo->data->philo_nb)
 	{
@@ -64,6 +74,7 @@ int		main(int argc, char **argv)
 	}
 	
 	print_time(philo);
+	printf("\n");
 	ft_free_philo(philo);
 	return (42);
 }

@@ -9,9 +9,3 @@ void	print_data(t_data *data)
 	if (data->meal_nb != -1)
 		printf("Number of meals : %d| miam miam|\n", data->meal_nb);
 }
-
-void	print_time(t_philo *philo)
-{
-	get_time(philo);
-	printf(""GRN"%ld miliseconds elapsed \n"WHT"", philo->p_now);
-}
