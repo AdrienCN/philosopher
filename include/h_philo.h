@@ -6,7 +6,7 @@
 /*   By: calao <adconsta@student.42.fr>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/24 15:29:50 by calao             #+#    #+#             */
-/*   Updated: 2021/07/01 21:20:43 by calao            ###   ########.fr       */
+/*   Updated: 2021/07/02 17:13:19 by calao            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,6 +29,11 @@
 # define CYN "\e[0;36m"
 # define WHT "\e[0;37m"
 
+# define EAT	1
+# define FORK	2
+# define SLEEP	3
+# define THINK	4
+
 typedef	struct s_data
 {
 	int				philo_nb;
@@ -45,10 +50,12 @@ typedef	struct	s_philo
 	int					l_fork_id;
 	int					r_fork_id;
 	int					p_sleep;
+	int					p_status;
 	int					p_eat;
 	int					p_id;
 	int					p_meal_count;
-	int					p_is_alive;
+	int					is_dead;
+	int					someone_died;
 	long				p_last_meal_diff;
 	
 	pthread_t			philo;
@@ -69,4 +76,6 @@ void	ft_free_philo(t_philo *data);
 long	get_time_diff(struct timeval start);
 void	print_time(t_philo *data);
 void	print_data(t_data *data);
+void	check_for_philo_death(t_philo *philo);
+int		print_status(t_philo *philo);
 #endif

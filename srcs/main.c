@@ -5,44 +5,36 @@ void	*routine(void *arg)
 	t_philo *philo;
 		
 	philo = (t_philo *)arg;
-	philo->p_meal_count = 0;
-	while (philo->p_is_alive != 0 && philo->p_meal_count < philo->data->meal_goal)
+	if (philo->data->meal_goal == -1)
+		philo->p_meal_count = -2;
+	else
+		philo->p_meal_count = 0;
+	while (philo->is_dead == 0 && philo->p_meal_count < philo->data->meal_goal)
 	{
 		pthread_mutex_lock(philo->data->fork_tab + philo->l_fork_id);
-	//	printf("entering routine:"WHT"\n");
-		if (!philo->p_is_alive)
-			return (NULL);
-		print_time(philo);
-		printf("philo_id - %d takes l_fork (%d)\n", philo->p_id, philo->l_fork_id); 
 		pthread_mutex_lock(philo->data->fork_tab + philo->r_fork_id);
+		philo->p_status = FORK;
+		if (print_status(philo) == -1 || print_status(philo) == -1)
+			return (NULL);
 		
-		if (!philo->p_is_alive)
-			return (NULL);
-		print_time(philo);
-		printf("philo_id - %d takes r_fork (%d)\n", philo->p_id, philo->r_fork_id); 
-//		philo->p_death = 1;
-	
-		if (!philo->p_is_alive)
-			return (NULL);
-		print_time(philo);
 		gettimeofday(&philo->p_last_meal, NULL);
-		printf("philo_id - %d eats ... \n"WHT"", philo->p_id);
-		philo->p_meal_count++;
+		if (philo->data->meal_goal != -1)
+			philo->p_meal_count++;
+		philo->p_status = EAT;
+		if (print_status(philo) == -1)
+			return (NULL);
 		usleep(philo->data->eat * 1000);
 
 		pthread_mutex_unlock(philo->data->fork_tab + philo->l_fork_id);
 		pthread_mutex_unlock(philo->data->fork_tab + philo->r_fork_id);
-	
-		if (!philo->p_is_alive)
+
+		philo->p_status = SLEEP;
+		if (print_status(philo) == -1)
 			return (NULL);
-		print_time(philo);
-		printf("philo_id - %d drops the forks ... & sleeps \n"WHT"", philo->p_id);
 		usleep(philo->data->sleep * 1000);
-	
-		if (!philo->p_is_alive)
-			return (NULL);	
-		print_time(philo);
-		printf(""RED"philo_id = %d wake up & thinks...\n"WHT"", philo->p_id);
+		
+		philo->p_status = THINK;	
+		print_status(philo);
 	}
 	return (NULL);
 }
@@ -68,19 +60,25 @@ int		everyone_is_alive(t_philo *philo)
 {
 	int i;
 	int ret;
-	long time_since_last_meal;
+	int	death;
 
 	i = 0;
 	ret = 1;
+	death = 0;
 	while (i < philo->data->philo_nb)
 	{
-		time_since_last_meal = get_time_diff(philo[i].p_last_meal);
-		if (time_since_last_meal >= philo->data->death)
-		{
-			printf(""MAG"Oh no philo -%d- DIED. Anyways... \n"WHT"", philo[i].p_id);
-			philo[i].p_is_alive = 0;
-			ret = 0;
-		}
+			if (philo[i].is_dead == 1)
+			{
+				death = 1;
+				ret = 0;
+				break;
+			}
+			i++;
+	}
+	i = 0;
+	while (i < philo->data->philo_nb)
+	{
+		philo[i].someone_died = death;
 		i++;
 	}
 	return (ret);
@@ -114,20 +112,21 @@ int		main(int argc, char **argv)
 	i = 0;
 	while (i < philo->data->philo_nb)
 	{
+		printf("lauch thread [%d]\n", i);
 		pthread_create(&(philo[i].philo), NULL, &routine, philo + i);
 		//pthread_create(&(data.philo_tab + i)->philo, NULL, &routine, &i);
 	//	pthread_create(&(data.philo_tab + i)->philo, NULL, &routine_2, &test);
 		i++;
 	}
-
-	while (everyone_is_alive(philo) && everyone_needs_to_eat(philo))
+	while (everyone_is_alive(philo))// && everyone_needs_to_eat(philo))
 	{
-		printf(""CYN"tout va bien\n");
-		sleep(1);
+	//	printf(""CYN"tout va bien\n");
+		usleep(100);
 	}
 	i = 0;
 	while (i < philo->data->philo_nb)
 	{
+		printf("join thread [%d]\n", i);
 		pthread_join(philo[i].philo, NULL);
 		i++;
 	}

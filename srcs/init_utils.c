@@ -44,7 +44,9 @@ int		ft_set_data(t_philo *philo, char **argv, int argc)
 	while (i < data->philo_nb)
 	{
 		philo[i].data = data;
-		philo[i].p_is_alive = 1;
+		philo[i].p_status = 0;
+		philo[i].is_dead = 0;
+		philo[i].someone_died = 0;
 		philo[i].p_id = i;
 		philo[i].r_fork = data->fork_tab[i];
 		philo[i].r_fork_id = i;
