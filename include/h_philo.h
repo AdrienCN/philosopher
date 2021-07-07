@@ -6,7 +6,7 @@
 /*   By: calao <adconsta@student.42.fr>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/24 15:29:50 by calao             #+#    #+#             */
-/*   Updated: 2021/07/02 17:13:19 by calao            ###   ########.fr       */
+/*   Updated: 2021/07/07 16:22:56 by calao            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,9 +30,11 @@
 # define WHT "\e[0;37m"
 
 # define EAT	1
-# define FORK	2
-# define SLEEP	3
-# define THINK	4
+# define FORK_L	2
+# define FORK_B 3
+# define SLEEP	4
+# define THINK	5
+# define FORK_R 6
 
 typedef	struct s_data
 {
@@ -41,8 +43,11 @@ typedef	struct s_data
 	int				death;
 	int				eat;
 	int				sleep;
-	struct	timeval	start;
-	pthread_mutex_t	*fork_tab;
+	int					someone_died;
+
+	pthread_mutex_t		print_lock;
+	struct	timeval		start;
+	pthread_mutex_t		*fork_tab;
 }				t_data;
 
 typedef	struct	s_philo
@@ -55,12 +60,12 @@ typedef	struct	s_philo
 	int					p_id;
 	int					p_meal_count;
 	int					is_dead;
-	int					someone_died;
 	long				p_last_meal_diff;
 	
 	pthread_t			philo;
-	pthread_mutex_t		l_fork;
-	pthread_mutex_t		r_fork;
+	pthread_mutex_t		death_lock;
+//	pthread_mutex_t		l_fork;
+//	pthread_mutex_t		r_fork;
 
 	long				p_now;
 	struct	timeval		p_last_meal;

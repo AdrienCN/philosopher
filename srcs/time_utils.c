@@ -6,7 +6,7 @@
 /*   By: calao <adconsta@student.42.fr>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/01 19:05:52 by calao             #+#    #+#             */
-/*   Updated: 2021/07/02 17:19:26 by calao            ###   ########.fr       */
+/*   Updated: 2021/07/06 17:44:01 by calao            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,9 @@ void	check_for_philo_death(t_philo *philo)
 	if (last_meal_time >= philo->data->death)
 	{
 	//	printf(""YLW"Philo last_meal = %ld ms | life = %d ms\n"WHT"", last_meal_time, philo->data->death);
+		pthread_mutex_lock(&(philo->death_lock));
 		philo->is_dead = 1;
+		pthread_mutex_unlock(&(philo->death_lock));
 	}
 }
 
