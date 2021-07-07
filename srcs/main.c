@@ -8,12 +8,9 @@ void	*routine(void *arg)
 	t_philo *philo;
 		
 	philo = (t_philo *)arg;
-	if (philo->data->meal_goal == -1)
-		philo->p_meal_count = -2;
-	else
-		philo->p_meal_count = 0;
-	while (philo->is_dead == 0 && philo->p_meal_count < philo->data->meal_goal)
+	while (philo->p_meal_count < philo->data->meal_goal || philo->data->meal_goal == -1)
 	{
+		// une fonction get_forks()
 		pthread_mutex_lock(philo->data->fork_tab + philo->l_fork_id);
 		philo->p_status = FORK_L;
 		if (print_status(philo) == -1)
@@ -23,6 +20,7 @@ void	*routine(void *arg)
 		if (print_status(philo) == -1)
 			return (NULL);
 		
+		// une fonction eat_and_sleep()
 		gettimeofday(&philo->p_last_meal, NULL);
 		if (philo->data->meal_goal != -1)
 			philo->p_meal_count++;
@@ -30,10 +28,8 @@ void	*routine(void *arg)
 		if (print_status(philo) == -1)
 			return (NULL);
 		usleep(philo->data->eat * 1000);
-
 		pthread_mutex_unlock(philo->data->fork_tab + philo->l_fork_id);
 		pthread_mutex_unlock(philo->data->fork_tab + philo->r_fork_id);
-
 		philo->p_status = SLEEP;
 		if (print_status(philo) == -1)
 			return (NULL);
@@ -42,8 +38,6 @@ void	*routine(void *arg)
 		philo->p_status = THINK;	
 		print_status(philo);
 	}
-	/*if (philo->p_meal_count == philo->data->meal_goal)
-		printf(""BLE"Philo [%d] has full belly and ate [%d] meals\n", philo->p_id, philo->p_meal_count);*/
 	return (NULL);
 }
 
@@ -145,6 +139,7 @@ int		main(int argc, char **argv)
 		pthread_create(&(philo[i].philo), NULL, &routine, philo + i);
 		i+= 2;
 	}
+	
 	pthread_create(&monitor, NULL, &monitor_routine, philo);
 	pthread_join(monitor, NULL);
 	i = 0;

@@ -44,34 +44,19 @@ int		ft_set_data(t_philo *philo, char **argv, int argc)
 	while (i < data->philo_nb)
 	{
 		philo[i].data = data;
+		philo[i].meal_count = 0;
 		philo[i].p_status = 0;
 		philo[i].is_dead = 0;
 		philo[i].data->someone_died = 0;
 		philo[i].p_id = i;
-	//	philo[i].r_fork = data->fork_tab[i];
 		philo[i].r_fork_id = i;
 		gettimeofday(&philo[i].p_last_meal, NULL);
 		if (i == 0)
-		{
-		//	philo[i].l_fork = data->fork_tab[data->philo_nb - 1];
 			philo[i].l_fork_id = data->philo_nb - 1;
-		}
 		else
-		{
-		//	philo[i].l_fork = data->fork_tab[i - 1];
 			philo[i].l_fork_id = i - 1;
-		}
-		printf("set data i = %d | p_id = %d\n", i, philo[i].p_id);
 		i++;
 	}
-	/*i = 0;
-	while (i < data->philo_nb)
-	{
-		printf("LEFT_fork = %d <-- philo[ %d ] --> RIGHT_f = %d\n", data->philo_tab[i].l_fork, i, data->philo_tab[i].r_fork);
-		i++;
-	}
-	printf("\n");
-*/
 	return (0);
 }
 
