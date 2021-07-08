@@ -44,7 +44,7 @@ int		ft_set_data(t_philo *philo, char **argv, int argc)
 	while (i < data->philo_nb)
 	{
 		philo[i].data = data;
-		philo[i].meal_count = 0;
+		philo[i].p_meal_count = 0;
 		philo[i].p_status = 0;
 		philo[i].is_dead = 0;
 		philo[i].data->someone_died = 0;

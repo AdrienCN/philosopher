@@ -2,7 +2,28 @@
 
 int		everyone_needs_to_eat(t_philo *philo);
 int		everyone_is_alive(t_philo *philo);
+void	ft_myusleep(long time);
 
+void	ft_myusleep(long time_ms)
+{
+	struct timeval	start;
+	long			sleep_ms;
+
+	sleep_ms = 0;
+	gettimeofday(&start, NULL);
+	//printf(""GRN"time to sleep = %ld\n"WHT"", time_ms);
+	int i;
+
+	i = 0;
+	while (sleep_ms < time_ms)
+	{
+		i++;
+	//	printf("%d.time slept = %ld\n",i , sleep_ms);
+		usleep(time_ms / 5);
+		sleep_ms = get_time_diff(start);
+	}
+	//printf(""RED"total slept = %ld\n"WHT"", sleep_ms);
+}
 void	*routine(void *arg)
 {
 	t_philo *philo;
@@ -27,13 +48,13 @@ void	*routine(void *arg)
 		philo->p_status = EAT;
 		if (print_status(philo) == -1)
 			return (NULL);
-		usleep(philo->data->eat * 1000);
+		ft_myusleep(philo->data->eat);
 		pthread_mutex_unlock(philo->data->fork_tab + philo->l_fork_id);
 		pthread_mutex_unlock(philo->data->fork_tab + philo->r_fork_id);
 		philo->p_status = SLEEP;
 		if (print_status(philo) == -1)
 			return (NULL);
-		usleep(philo->data->sleep * 1000);
+		ft_myusleep(philo->data->sleep);
 		
 		philo->p_status = THINK;	
 		print_status(philo);
@@ -107,6 +128,8 @@ int		main(int argc, char **argv)
 	pthread_t		monitor;
 	int				i;
 	
+	//ft_myusleep(ft_atoi(argv[1]));
+//	return (1);
 	if (argc < 5 || argc > 6)
 	{
 		printf("Error: arg count = %d: Philo needs 4 or 5 arguments\n", argc);
@@ -122,6 +145,7 @@ int		main(int argc, char **argv)
 		return (1);
 	if (ft_set_data(philo, argv, argc) != 0)
 		return (-1);
+
 	print_data(philo->data);
 	gettimeofday(&(philo->data->start), NULL);
 	print_time(philo);
