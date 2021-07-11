@@ -37,13 +37,20 @@ int		ft_set_data(t_philo *philo, char **argv, int argc)
 	if (data->fork_tab == NULL)
 		return (1);
 	i = -1;
+
+	pthread_mutex_init(&(data->print_lock), NULL);
+	pthread_mutex_init(&(data->status_lock), NULL);
 	while (++i < data->philo_nb)
+	{
 		pthread_mutex_init(data->fork_tab + i, NULL);
+		pthread_mutex_init(&philo[i].death_lock, NULL);
+	}
 
 	i = 0;
 	while (i < data->philo_nb)
 	{
 		philo[i].data = data;
+		philo[i].p_belly_print = 0;
 		philo[i].p_meal_count = 0;
 		philo[i].p_status = 0;
 		philo[i].is_dead = 0;

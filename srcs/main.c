@@ -1,180 +1,45 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   main.c                                             :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: calao <adconsta@student.42.fr>             +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2021/07/11 15:36:25 by calao             #+#    #+#             */
+/*   Updated: 2021/07/11 16:57:05 by calao            ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
 #include "h_philo.h"
 
-int		everyone_needs_to_eat(t_philo *philo);
-int		everyone_is_alive(t_philo *philo);
-void	ft_myusleep(long time);
-
-void	ft_myusleep(long time_ms)
-{
-	struct timeval	start;
-	long			sleep_ms;
-
-	sleep_ms = 0;
-	gettimeofday(&start, NULL);
-	//printf(""GRN"time to sleep = %ld\n"WHT"", time_ms);
-	int i;
-
-	i = 0;
-	while (sleep_ms < time_ms)
-	{
-		i++;
-	//	printf("%d.time slept = %ld\n",i , sleep_ms);
-		usleep(time_ms / 5);
-		sleep_ms = get_time_diff(start);
-	}
-	//printf(""RED"total slept = %ld\n"WHT"", sleep_ms);
-}
-void	*routine(void *arg)
-{
-	t_philo *philo;
-		
-	philo = (t_philo *)arg;
-	while (philo->p_meal_count < philo->data->meal_goal || philo->data->meal_goal == -1)
-	{
-		// une fonction get_forks()
-		pthread_mutex_lock(philo->data->fork_tab + philo->l_fork_id);
-		philo->p_status = FORK_L;
-		if (print_status(philo) == -1)
-			return (NULL);
-		pthread_mutex_lock(philo->data->fork_tab + philo->r_fork_id);
-		philo->p_status = FORK_B;
-		if (print_status(philo) == -1)
-			return (NULL);
-		
-		// une fonction eat_and_sleep()
-		gettimeofday(&philo->p_last_meal, NULL);
-		if (philo->data->meal_goal != -1)
-			philo->p_meal_count++;
-		philo->p_status = EAT;
-		if (print_status(philo) == -1)
-			return (NULL);
-		ft_myusleep(philo->data->eat);
-		pthread_mutex_unlock(philo->data->fork_tab + philo->l_fork_id);
-		pthread_mutex_unlock(philo->data->fork_tab + philo->r_fork_id);
-		philo->p_status = SLEEP;
-		if (print_status(philo) == -1)
-			return (NULL);
-		ft_myusleep(philo->data->sleep);
-		
-		philo->p_status = THINK;	
-		print_status(philo);
-	}
-	return (NULL);
-}
-
-void	*monitor_routine(void *arg)
-{
-	t_philo *philo;
-
-	philo = (t_philo *)arg;
-
-	while (everyone_is_alive(philo) && everyone_needs_to_eat(philo))
-	{
-		usleep(100);
-	}
-	return (NULL);
-}
-
-int		everyone_needs_to_eat(t_philo *philo)
-{
-	int i;
-
-	i = 0;
-	if (philo->data->meal_goal == -1)
-		return (1);
-	while (i < philo->data->philo_nb)
-	{
-		if (philo[i].p_meal_count< philo->data->meal_goal)
-			return (1);
-		i++;
-	}
-	printf(""BLE"Everyone ate well."WHT"\n");
-	return (0);
-}
-
-int		everyone_is_alive(t_philo *philo)
-{
-	int i;
-	int ret;
-
-	i = 0;
-	ret = 1;
-	pthread_mutex_lock(&(philo->data->print_lock));
-	while (i < philo->data->philo_nb)
-	{
-		check_for_philo_death(&philo[i]);		
-		if (philo[i].is_dead == 1)
-		{
-			print_time(&philo[i]);
-			printf(""YLW"philo_[%d] is DEAD(from main)\n"WHT"", philo[i].p_id + 1);
-			if (philo[i].p_status == FORK_B || philo[i].p_status == FORK_L)
-				pthread_mutex_unlock(philo->data->fork_tab + philo[i].l_fork_id);
-			if (philo[i].p_status == FORK_B)
-				pthread_mutex_unlock(philo->data->fork_tab + philo[i].r_fork_id);
-			philo->data->someone_died = 1;
-			ret = 0;
-			break;
-		}
-		i++;
-	}
-	pthread_mutex_unlock(&(philo->data->print_lock));
-	return (ret);
-}
-
-
-int		main(int argc, char **argv)
+int	main(int argc, char **argv)
 {
 	t_philo			*philo;
 	pthread_t		monitor;
-	int				i;
-	
-	//ft_myusleep(ft_atoi(argv[1]));
-//	return (1);
+	int				ret;
+
+	ret = 0;
 	if (argc < 5 || argc > 6)
-	{
-		printf("Error: arg count = %d: Philo needs 4 or 5 arguments\n", argc);
-		return (1);
-	}
+		return (ft_err_msg("Error: Usage: Needs 4 or 5 arguments"));
 	if (parsing_error(argv) || ft_atoi(argv[1]) == 0 || ft_atoi(argv[1]) > 200)
-	{
-		printf("Error: parsing: wrong args\n");
-		return (1);
-	}
+		return (ft_err_msg("Error: Parsing: argument incorrect value"));
 	philo = malloc(sizeof(t_philo) * (ft_atoi(argv[1])));
 	if (philo == NULL)
-		return (1);
+		return (ft_err_msg("Error: Malloc: failed"));
 	if (ft_set_data(philo, argv, argc) != 0)
-		return (-1);
-
-	print_data(philo->data);
+		return (ft_err_msg("Error: Data: Initialisation failed"));
 	gettimeofday(&(philo->data->start), NULL);
-	print_time(philo);
-	printf("\n");
-	i = 0;
-	while (i < philo->data->philo_nb)
-	{
-		pthread_create(&(philo[i].philo), NULL, &routine, philo + i);
-		i+= 2;
-	}
-	usleep(10);
-	i = 1;
-	while (i < philo->data->philo_nb)
-	{
-		pthread_create(&(philo[i].philo), NULL, &routine, philo + i);
-		i+= 2;
-	}
-	
-	pthread_create(&monitor, NULL, &monitor_routine, philo);
-	pthread_join(monitor, NULL);
-	i = 0;
-	while (i < philo->data->philo_nb)
-	{
-		pthread_join(philo[i].philo, NULL);
-		i++;
-	}
-	printf("\n");
+	ft_launch_threads(philo, &monitor);
+	ret = ft_end_threads(philo, &monitor);
 	ft_free_philo(philo);
-	return (42);
+	if (ret == 1)
+		printf("Error: Threads: Thread creation or joining failed");
+	return (ret);
+}
+
+int	ft_err_msg(char *str)
+{
+	printf("%s\n", str);
+	return (1);
 }
 
 void	ft_free_philo(t_philo *philo)
@@ -183,6 +48,46 @@ void	ft_free_philo(t_philo *philo)
 		free(philo->data->fork_tab);
 	if (philo->data)
 		free(philo->data);
-	//free(philo) ou  for (i < philo_nb) free(philo[i]) ? 
+	if (philo)
+		free(philo);
+}
 
+int	ft_launch_threads(t_philo *philo, pthread_t *monitor)
+{
+	int	i;
+
+	i = 0;
+	while (i < philo->data->philo_nb)
+	{
+		if (pthread_create(&(philo[i].philo), NULL, &routine, philo + i) != 0)
+			return (1);
+		i += 2;
+	}
+	usleep(10);
+	i = 1;
+	while (i < philo->data->philo_nb)
+	{
+		if (pthread_create(&(philo[i].philo), NULL, &routine, philo + i) != 0)
+			return (1);
+		i += 2;
+	}
+	if (pthread_create(monitor, NULL, &monitor_routine, philo) != 0)
+		return (1);
+	return (0);
+}
+
+int	ft_end_threads(t_philo *philo, pthread_t *monitor)
+{
+	int	i;
+
+	i = 0;
+	while (i < philo->data->philo_nb)
+	{
+		if (pthread_join(philo[i].philo, NULL) != 0)
+			return (1);
+		i++;
+	}
+	if (pthread_join(*monitor, NULL) != 0)
+		return (1);
+	return (0);
 }

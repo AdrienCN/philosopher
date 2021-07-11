@@ -1,7 +1,9 @@
 SRCS = 	srcs/main.c	\
 		srcs/init_utils.c \
 		srcs/print_utils.c \
-		srcs/time_utils.c
+		srcs/time_utils.c \
+		srcs/monitor.c \
+		srcs/routine.c
 		
 OBJ = $(SRCS:.c=.o)
 
@@ -13,8 +15,7 @@ INCLUDE = ./include/
 
 CC = gcc
 
-CFLAGS = -Wall -Wextra -Werror
-
+CFLAGS = -Wall -Wextra -Werror -fsanitize=thread -g
 %.o: %.c $(INCLUDE)
 	$(CC) $(CFLAGS) -pthread -I $(INCLUDE) -c $< -o $@
 
