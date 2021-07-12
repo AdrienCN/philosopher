@@ -15,7 +15,9 @@ INCLUDE = ./include/
 
 CC = gcc
 
-CFLAGS = -Wall -Wextra -Werror -fsanitize=thread -g
+CFLAGS = -Wall -Wextra -Werror 
+#CFLAGS = -Wall -Wextra -Werror -fsanitize=thread -g
+
 %.o: %.c $(INCLUDE)
 	$(CC) $(CFLAGS) -pthread -I $(INCLUDE) -c $< -o $@
 

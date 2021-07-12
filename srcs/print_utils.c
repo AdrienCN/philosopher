@@ -20,18 +20,14 @@ void	print_philo_status(t_philo *philo)
 
 	i = philo->p_id + 1;
 	time = get_time_diff(philo->data->start);
-	if (philo->p_status == FORK_L)
-		printf(""GRN"%ld ms "WHT"philo_[%d] has taken LEFT fork\n", time, i);
-	else if (philo->p_status == FORK_B)
-		printf(""GRN"%ld ms "WHT"philo_[%d] has taken RIGHT fork\n", time, i);
+	if (philo->p_status == FORK_L || philo->p_status == FORK_B)
+		printf(""GRN"%ld ms "WHT"philo_[%d] has taken a fork\n", time, i);
 	else if (philo->p_status == EAT)
-		printf(""GRN"%ld ms"WHT" philo_[%d] eats.\n"WHT"", time, i);
+		printf(""GRN"%ld ms"WHT" philo_[%d] is eating\n", time, i);
 	else if (philo->p_status == SLEEP)
-		printf(""GRN"%ld ms"WHT" philo_[%d] sleeps.\n"WHT"", time, i);
+		printf(""GRN"%ld ms"WHT" philo_[%d] is sleeping.\n", time, i);
 	else if (philo->p_status == THINK)
-		printf(""GRN"%ld ms "RED"philo[%d] thinks.\n"WHT"", time, i);
-	else
-		printf(""MAG"WTF are you doing philo -%d- ???\n", i);
+		printf(""GRN"%ld ms "WHT"philo_[%d] is thinking\n", time, i);
 }
 
 int	print_status(t_philo *philo)
@@ -40,7 +36,8 @@ int	print_status(t_philo *philo)
 
 	pthread_mutex_lock(&(philo->data->print_lock));
 	ret = 0;
-	if (philo->is_dead == 1 || philo->data->someone_died == 1)
+	if (philo->is_dead == 1 || philo->data->someone_died == 1 
+			|| (philo->data->meal_goal != - 1 && philo->p_meal_count >= philo->data->meal_goal))
 	{
 		end_philo_routine(philo);
 		ret = 1;

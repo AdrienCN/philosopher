@@ -4,7 +4,7 @@ void	ft_myusleep(long time_ms)
 {
 	struct timeval	start;
 	long			sleep_ms;
-	int i;
+	int				i;
 
 	sleep_ms = 0;
 	gettimeofday(&start, NULL);
@@ -19,19 +19,19 @@ void	ft_myusleep(long time_ms)
 
 void	*monitor_routine(void *arg)
 {
-	t_philo *philo;
-
+	t_philo	*philo;
+	
 	philo = (t_philo *)arg;
-
 	while (everyone_is_alive(philo) && everyone_needs_to_eat(philo))
 		usleep(100);
 	return (NULL);
 }
 
-int		everyone_needs_to_eat(t_philo *philo)
+int	everyone_needs_to_eat(t_philo *philo)
 {
-	int i;
-	int	ret;
+	int		i;
+	int		ret;
+	long	time;
 
 	i = 0;
 	ret = 0;
@@ -42,13 +42,13 @@ int		everyone_needs_to_eat(t_philo *philo)
 	{
 		if (philo[i].p_meal_count < philo->data->meal_goal)
 			ret = 1;
-		if (philo[i].p_meal_count == philo->data->meal_goal 
-				&& philo[i].p_belly_print == 0)
-		{
-			philo[i].p_belly_print = 1;
-			printf(""BLE"Philo[%d] finished eating his [%d]meals\n", i + 1, philo[i].p_meal_count);
-		}
 		i++;
+	}
+	if (ret == 0)
+	{
+		time = get_time_diff(philo->data->start);
+		printf(""GRN"%ld ms "YLW"All philosophers ate their [%d] meal(s)\n", 
+			time, philo->data->meal_goal);
 	}
 	pthread_mutex_unlock(&(philo->data->print_lock));
 	return (ret);
@@ -56,12 +56,13 @@ int		everyone_needs_to_eat(t_philo *philo)
 
 void	ft_print_death(t_philo *philo)
 {
-	long time;
+	long	time;
 
 	time = get_time_diff(philo->data->start);
-	printf(""GRN"%ld ms "YLW"philo_[%d] is DEAD(from main)\n"WHT"",time, philo->p_id + 1);
+	printf(""GRN"%ld ms "YLW"philo_[%d] died\n"WHT"",
+		time, philo->p_id + 1);
 	if (philo->p_status == SLEEP || philo->p_status == THINK)
-		return;
+		return ;
 	if (philo->p_status == FORK_B || philo->p_status == EAT)
 	{
 		pthread_mutex_unlock(philo->data->fork_tab + philo->l_fork_id);
@@ -71,10 +72,10 @@ void	ft_print_death(t_philo *philo)
 		pthread_mutex_unlock(philo->data->fork_tab + philo->l_fork_id);
 }
 
-int		everyone_is_alive(t_philo *philo)
+int	everyone_is_alive(t_philo *philo)
 {
-	int i;
-	int ret;
+	int	i;
+	int	ret;
 
 	i = 0;
 	ret = 1;
@@ -82,13 +83,13 @@ int		everyone_is_alive(t_philo *philo)
 	pthread_mutex_lock(&(philo->data->print_lock));
 	while (i < philo->data->philo_nb)
 	{
-		check_for_philo_death(&philo[i]);		
+		check_for_philo_death(&philo[i]);
 		if (philo[i].is_dead == 1)
 		{
 			ft_print_death(philo);
 			philo->data->someone_died = 1;
 			ret = 0;
-			break;
+			break ;
 		}
 		i++;
 	}

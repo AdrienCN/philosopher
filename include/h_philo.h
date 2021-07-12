@@ -6,7 +6,7 @@
 /*   By: calao <adconsta@student.42.fr>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/24 15:29:50 by calao             #+#    #+#             */
-/*   Updated: 2021/07/11 16:57:41 by calao            ###   ########.fr       */
+/*   Updated: 2021/07/12 10:53:10 by calao            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,23 +34,22 @@
 # define FORK_B 3
 # define SLEEP	4
 # define THINK	5
-# define FORK_R 6
-typedef	struct s_data
+# define FORK_R	6
+typedef struct s_data
 {
 	int				philo_nb;
 	int				meal_goal;
 	int				death;
 	int				eat;
 	int				sleep;
-	int					someone_died;
-
-	pthread_mutex_t		print_lock;
-	pthread_mutex_t		status_lock;
-	struct	timeval		start;
-	pthread_mutex_t		*fork_tab;
+	int				someone_died;
+	pthread_mutex_t	print_lock;
+	pthread_mutex_t	status_lock;
+	struct timeval	start;
+	pthread_mutex_t	*fork_tab;
 }				t_data;
 
-typedef	struct	s_philo
+typedef struct s_philo
 {
 	int					l_fork_id;
 	int					r_fork_id;
@@ -62,12 +61,10 @@ typedef	struct	s_philo
 	int					p_belly_print;
 	int					is_dead;
 	long				p_last_meal_diff;
-	
 	pthread_t			philo;
-	pthread_mutex_t		death_lock;
-
+//	pthread_mutex_t		death_lock;
 	long				p_now;
-	struct	timeval		p_last_meal;
+	struct timeval		p_last_meal;
 	t_data				*data;
 
 }				t_philo;

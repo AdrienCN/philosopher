@@ -1,10 +1,10 @@
 #include "h_philo.h"
 
-int		ft_atoi(char *str)
+int	ft_atoi(char *str)
 {
-	int i;
+	int	i;
 	int	res;
-	
+
 	i = 0;
 	res = 0;
 	if (str[i] == '+')
@@ -17,35 +17,43 @@ int		ft_atoi(char *str)
 	return (res);
 }
 
-int		ft_set_data(t_philo *philo, char **argv, int argc)
+t_data	*ft_setup_data(char **argv, int argc)
 {
-	int i;
-	t_data *data;
+	int		i;
+	t_data	*data;
 
 	data = malloc(sizeof(t_data));
 	if (data == NULL)
-		return (1);
+		return (NULL);
 	data->philo_nb = ft_atoi(argv[1]);
 	data->death = ft_atoi(argv[2]);
 	data->eat = ft_atoi(argv[3]);
 	data->sleep = ft_atoi(argv[4]);
-	if (argc ==  6)
+	if (argc == 6)
 		data->meal_goal = ft_atoi(argv[5]);
 	else
 		data->meal_goal = -1;
 	data->fork_tab = malloc(sizeof(pthread_mutex_t) * (data->philo_nb));
 	if (data->fork_tab == NULL)
-		return (1);
+		return (NULL);
 	i = -1;
-
+	//retour de mutex init ?
 	pthread_mutex_init(&(data->print_lock), NULL);
 	pthread_mutex_init(&(data->status_lock), NULL);
 	while (++i < data->philo_nb)
-	{
 		pthread_mutex_init(data->fork_tab + i, NULL);
-		pthread_mutex_init(&philo[i].death_lock, NULL);
-	}
+	//	pthread_mutex_init(&philo[i].death_lock, NULL);
+	return (data);
+}
 
+int	ft_set_data(t_philo *philo, char **argv, int argc)
+{
+	int		i;
+	t_data	*data;
+
+	data = ft_setup_data(argv, argc);
+	if (data == NULL)
+		return (1);
 	i = 0;
 	while (i < data->philo_nb)
 	{
@@ -67,10 +75,10 @@ int		ft_set_data(t_philo *philo, char **argv, int argc)
 	return (0);
 }
 
-int		ft_data_is_digit(char *str)
+int	ft_data_is_digit(char *str)
 {
-	int i;
-	
+	int	i;
+
 	i = 0;
 	if (str[i] == '+')
 		i++;
@@ -83,9 +91,9 @@ int		ft_data_is_digit(char *str)
 	return (0);
 }
 
-int		parsing_error(char **argv)
+int	parsing_error(char **argv)
 {
-	int i;
+	int	i;
 
 	i = 1;
 	while (argv[i])

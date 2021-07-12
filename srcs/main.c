@@ -6,7 +6,7 @@
 /*   By: calao <adconsta@student.42.fr>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/11 15:36:25 by calao             #+#    #+#             */
-/*   Updated: 2021/07/11 16:57:05 by calao            ###   ########.fr       */
+/*   Updated: 2021/07/12 11:41:01 by calao            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 #include "h_philo.h"
@@ -26,7 +26,10 @@ int	main(int argc, char **argv)
 	if (philo == NULL)
 		return (ft_err_msg("Error: Malloc: failed"));
 	if (ft_set_data(philo, argv, argc) != 0)
+	{
+		//ft_free_philo(philo);
 		return (ft_err_msg("Error: Data: Initialisation failed"));
+	}
 	gettimeofday(&(philo->data->start), NULL);
 	ft_launch_threads(philo, &monitor);
 	ret = ft_end_threads(philo, &monitor);
@@ -63,7 +66,7 @@ int	ft_launch_threads(t_philo *philo, pthread_t *monitor)
 			return (1);
 		i += 2;
 	}
-	usleep(10);
+	usleep(50);
 	i = 1;
 	while (i < philo->data->philo_nb)
 	{
