@@ -6,7 +6,7 @@
 /*   By: calao <adconsta@student.42.fr>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/11 15:36:25 by calao             #+#    #+#             */
-/*   Updated: 2021/07/12 14:14:21 by calao            ###   ########.fr       */
+/*   Updated: 2021/07/12 14:46:41 by calao            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 #include "h_philo.h"
@@ -66,7 +66,7 @@ int	ft_launch_threads(t_philo *philo, pthread_t *monitor)
 			return (1);
 		i += 2;
 	}
-	usleep(50);
+	usleep(500);
 	i = 1;
 	while (i < philo->data->philo_nb)
 	{
