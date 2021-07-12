@@ -20,7 +20,7 @@ void	ft_myusleep(long time_ms)
 void	*monitor_routine(void *arg)
 {
 	t_philo	*philo;
-	
+
 	philo = (t_philo *)arg;
 	while (everyone_is_alive(philo) && everyone_needs_to_eat(philo))
 		usleep(100);
@@ -47,7 +47,7 @@ int	everyone_needs_to_eat(t_philo *philo)
 	if (ret == 0)
 	{
 		time = get_time_diff(philo->data->start);
-		printf(""GRN"%ld ms "YLW"All philosophers ate their [%d] meal(s)\n", 
+		printf(""GRN"%ld ms "YLW"All philosophers ate their [%d] meal(s)\n",
 			time, philo->data->meal_goal);
 	}
 	pthread_mutex_unlock(&(philo->data->print_lock));

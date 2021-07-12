@@ -25,24 +25,19 @@ t_data	*ft_setup_data(char **argv, int argc)
 	data = malloc(sizeof(t_data));
 	if (data == NULL)
 		return (NULL);
-	data->philo_nb = ft_atoi(argv[1]);
-	data->death = ft_atoi(argv[2]);
-	data->eat = ft_atoi(argv[3]);
-	data->sleep = ft_atoi(argv[4]);
-	if (argc == 6)
-		data->meal_goal = ft_atoi(argv[5]);
-	else
-		data->meal_goal = -1;
+	ft_setup_data_two(data, argv, argc);
 	data->fork_tab = malloc(sizeof(pthread_mutex_t) * (data->philo_nb));
 	if (data->fork_tab == NULL)
 		return (NULL);
 	i = -1;
-	//retour de mutex init ?
-	pthread_mutex_init(&(data->print_lock), NULL);
-	pthread_mutex_init(&(data->status_lock), NULL);
+	if (pthread_mutex_init(&(data->print_lock), NULL) != 0
+		|| pthread_mutex_init(&(data->status_lock), NULL) != 0)
+		return (NULL);
 	while (++i < data->philo_nb)
-		pthread_mutex_init(data->fork_tab + i, NULL);
-	//	pthread_mutex_init(&philo[i].death_lock, NULL);
+	{
+		if (pthread_mutex_init(data->fork_tab + i, NULL) != 0)
+			return (NULL);
+	}
 	return (data);
 }
 

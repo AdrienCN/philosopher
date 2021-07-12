@@ -6,7 +6,7 @@
 /*   By: calao <adconsta@student.42.fr>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/06/24 15:29:50 by calao             #+#    #+#             */
-/*   Updated: 2021/07/12 10:53:10 by calao            ###   ########.fr       */
+/*   Updated: 2021/07/12 14:17:44 by calao            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,7 +62,6 @@ typedef struct s_philo
 	int					is_dead;
 	long				p_last_meal_diff;
 	pthread_t			philo;
-//	pthread_mutex_t		death_lock;
 	long				p_now;
 	struct timeval		p_last_meal;
 	t_data				*data;
@@ -90,5 +89,5 @@ int		everyone_is_alive(t_philo *philo);
 int		ft_end_threads(t_philo *philo, pthread_t *monitor);
 int		ft_launch_threads(t_philo *philo, pthread_t *monitor);
 int		ft_err_msg(char *str);
-
+void	ft_setup_data_two(t_data *data, char **argv, int argc);
 #endif

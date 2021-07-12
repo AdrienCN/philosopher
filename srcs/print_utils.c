@@ -36,8 +36,9 @@ int	print_status(t_philo *philo)
 
 	pthread_mutex_lock(&(philo->data->print_lock));
 	ret = 0;
-	if (philo->is_dead == 1 || philo->data->someone_died == 1 
-			|| (philo->data->meal_goal != - 1 && philo->p_meal_count >= philo->data->meal_goal))
+	if (philo->is_dead == 1 || philo->data->someone_died == 1
+		|| (philo->data->meal_goal != -1
+			&& philo->p_meal_count >= philo->data->meal_goal))
 	{
 		end_philo_routine(philo);
 		ret = 1;

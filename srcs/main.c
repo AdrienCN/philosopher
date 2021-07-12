@@ -6,7 +6,7 @@
 /*   By: calao <adconsta@student.42.fr>             +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/07/11 15:36:25 by calao             #+#    #+#             */
-/*   Updated: 2021/07/12 11:41:01 by calao            ###   ########.fr       */
+/*   Updated: 2021/07/12 14:14:21 by calao            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 #include "h_philo.h"
@@ -27,7 +27,7 @@ int	main(int argc, char **argv)
 		return (ft_err_msg("Error: Malloc: failed"));
 	if (ft_set_data(philo, argv, argc) != 0)
 	{
-		//ft_free_philo(philo);
+		ft_free_philo(philo);
 		return (ft_err_msg("Error: Data: Initialisation failed"));
 	}
 	gettimeofday(&(philo->data->start), NULL);
@@ -84,6 +84,7 @@ int	ft_end_threads(t_philo *philo, pthread_t *monitor)
 	int	i;
 
 	i = 0;
+	i = 0;
 	while (i < philo->data->philo_nb)
 	{
 		if (pthread_join(philo[i].philo, NULL) != 0)
@@ -92,5 +93,12 @@ int	ft_end_threads(t_philo *philo, pthread_t *monitor)
 	}
 	if (pthread_join(*monitor, NULL) != 0)
 		return (1);
+	pthread_mutex_destroy(&philo->data->print_lock);
+	pthread_mutex_destroy(&philo->data->status_lock);
+	while (i < philo->data->philo_nb)
+	{
+		pthread_mutex_destroy(&philo->data->fork_tab[i]);
+		i++;
+	}
 	return (0);
 }

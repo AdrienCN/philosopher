@@ -2,7 +2,9 @@
 
 int	get_forks(t_philo *philo)
 {
-	if (philo->p_id % 2 || !(philo->p_id == philo->data->philo_nb && !(philo->data->philo_nb % 2)))
+	if (philo->p_id % 2
+		|| !(philo->p_id == philo->data->philo_nb
+			&& !(philo->data->philo_nb % 2)))
 		pthread_mutex_lock(philo->data->fork_tab + philo->l_fork_id);
 	else
 		pthread_mutex_lock(philo->data->fork_tab + philo->r_fork_id);
@@ -11,7 +13,9 @@ int	get_forks(t_philo *philo)
 	pthread_mutex_unlock(&philo->data->status_lock);
 	if (print_status(philo))
 		return (1);
-	if (philo->p_id % 2 || !(philo->p_id == philo->data->philo_nb && !(philo->data->philo_nb % 2)))
+	if (philo->p_id % 2
+		|| !(philo->p_id == philo->data->philo_nb
+			&& !(philo->data->philo_nb % 2)))
 		pthread_mutex_lock(philo->data->fork_tab + philo->r_fork_id);
 	else
 		pthread_mutex_lock(philo->data->fork_tab + philo->l_fork_id);
@@ -51,8 +55,6 @@ void	*routine(void *arg)
 	t_philo	*philo;
 
 	philo = (t_philo *)arg;
-	//while (philo->p_meal_count < philo->data->meal_goal 
-	//|| philo->data->meal_goal == -1)
 	while ((6 * 7) == 42)
 	{
 		if (get_forks(philo))
